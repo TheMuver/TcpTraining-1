@@ -10,34 +10,31 @@ namespace Client
             Connect("127.0.0.1", "String message");
         }
 
+        // Functions:
+        // Connect()
+        // SendMessage()
+        // StartListening()
+        // + OnMessageReceived
+        // StopListening()
+        // Disconnect()
+
         static void Connect(String server, String message)
         {
             try
             {
                 #region Connect
-                // Create a TcpClient.
-                // Note, for this client to work you need to have a TcpServer
-                // connected to the same address as specified by the server, port
-                // combination.
                 Int32 port = 13000;
                 TcpClient client = new TcpClient(server, port);
-
-                // Get a client stream for reading and writing.
-                //  Stream stream = client.GetStream();
                 NetworkStream stream = client.GetStream();
-                #endregion
+                #endregion Connect
 
-                // Translate the passed message into ASCII and store it as a Byte array.
+                #region SendMessage
                 Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
 
-                // Send the message to the connected TcpServer.
                 stream.Write(data, 0, data.Length);
 
                 Console.WriteLine("Sent: {0}", message);
-
-                // Receive the TcpServer.response.
-
-                // Buffer to store the response bytes.
+                #endregion SendMessage
                 data = new Byte[256];
 
                 // String to store the response ASCII representation.
