@@ -23,9 +23,7 @@ namespace Client
             try
             {
                 #region Connect
-                Int32 port = 13000;
-                TcpClient client = new TcpClient(server, port);
-                NetworkStream stream = client.GetStream();
+
                 #endregion Connect
 
                 #region SendMessage
