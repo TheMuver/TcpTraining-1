@@ -1,110 +1,65 @@
 ﻿using System;
-using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 
-namespace Listener
+namespace Client
 {
     class Program
     {
         static void Main(string[] args)
         {
-            TcpListener server = null;
+            Connect("127.0.0.1", "String message");
+        }
+
+        // Functions:
+        // Connect()
+        // SendMessage()
+        // StartListening()
+        // + OnMessageReceived
+        // StopListening()
+        // Disconnect()
+
+        static void Connect(String server, String message)
+        {
             try
             {
-                // Set the TcpListener on port 13000.
-                int port = 13000;
-                IPAddress localAddr = IPAddress.Parse("127.0.0.1");
+                #region Connect
+                Int32 port = 13000;
+                TcpClient client = new TcpClient(server, port);
+                NetworkStream stream = client.GetStream();
+                #endregion Connect
 
-                // TcpListener server = new TcpListener(port);
-                server = new TcpListener(localAddr, port);
+                #region SendMessage
+                Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
 
-                // Start listening for client requests.
-                server.Start();
+                stream.Write(data, 0, data.Length);
 
-                // Buffer for reading data
-                Byte[] bytes = new Byte[256];
-                String data = null;
+                Console.WriteLine("Sent: {0}", message);
+                #endregion SendMessage
+                data = new Byte[256];
 
-                // Enter the listening loop.
-                while (true)
-                {
-                    Console.Write("Waiting for a connection... ");
+                // String to store the response ASCII representation.
+                String responseData = String.Empty;
 
-                    // Perform a blocking call to accept requests.
-                    // You could also use server.AcceptSocket() here.
-                    TcpClient client = server.AcceptTcpClient();
-                    Console.WriteLine("Connected!");
+                // Read the first batch of the TcpServer response bytes.
+                Int32 bytes = stream.Read(data, 0, data.Length);
+                responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
+                Console.WriteLine("Received: {0}", responseData);
 
-                    Thread clientThread = new Thread(() => {
-                        data = null;
-
-                        // Get a stream object for reading and writing
-                        NetworkStream stream = client.GetStream();
-                        int i;
-
-                        // Loop to receive all the data sent by the client.
-                        while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
-                        {
-                            // Translate data bytes to a ASCII string.
-                            data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-                            Console.WriteLine("Received: {0}", data);
-
-                            // Process the data sent by the client.
-                            switch (data)
-                            {
-                                case "a":
-                                    Console.WriteLine("Cursor Move Upper Left");
-                                    Console.Beep(4000, 300);
-                                    break;
-                                case "b":
-                                    Console.WriteLine("Cursor Move Upper Right");
-                                    Console.Beep(2000, 300);
-                                    break;
-                                case "c":
-                                    Console.WriteLine("Cursor Move Lower Right");
-                                    Console.Beep(5000, 300);
-                                    break;
-                                case "d":
-                                    Console.WriteLine("Cursor Move Lower Left");
-                                    Console.Beep(6000, 300);
-                                    break;
-                                case "e":
-                                    Console.WriteLine("Cursor Move Center");
-                                    Console.Beep(8000, 300);
-                                    break;
-                                default:
-                                    Console.WriteLine($"Symbol: {data} received but no reaction found");
-                                    break;
-                            }
-
-                            byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
-
-                            // Send back a response.
-                            stream.Write(msg, 0, msg.Length);
-                            Console.WriteLine("Sent: {0}", data);
-                        }
-
-                        // Shutdown and end connection
-                        client.Close(); 
-                    });
-
-                    clientThread.Start();
-                }
+                // Close everything.
+                stream.Close();
+                client.Close();
+            }
+            catch (ArgumentNullException e)
+            {
+                Console.WriteLine("ArgumentNullException: {0}", e);
             }
             catch (SocketException e)
             {
                 Console.WriteLine("SocketException: {0}", e);
             }
-            finally
-            {
-                // Stop listening for new clients.
-                server.Stop();
-            }
 
-            Console.WriteLine("\nHit enter to continue...");
+            Console.WriteLine("\n Press Enter to continue...");
             Console.Read();
         }
     }
 }
-

@@ -14,6 +14,7 @@ namespace Client
         {
             try
             {
+                #region Connect
                 // Create a TcpClient.
                 // Note, for this client to work you need to have a TcpServer
                 // connected to the same address as specified by the server, port
@@ -21,13 +22,13 @@ namespace Client
                 Int32 port = 13000;
                 TcpClient client = new TcpClient(server, port);
 
-                // Translate the passed message into ASCII and store it as a Byte array.
-                Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
-
                 // Get a client stream for reading and writing.
                 //  Stream stream = client.GetStream();
-
                 NetworkStream stream = client.GetStream();
+                #endregion
+
+                // Translate the passed message into ASCII and store it as a Byte array.
+                Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
 
                 // Send the message to the connected TcpServer.
                 stream.Write(data, 0, data.Length);
