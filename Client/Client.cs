@@ -1,3 +1,4 @@
+using System.Text;
 using System.Net;
 using System;
 using System.Net.Sockets;
@@ -11,6 +12,8 @@ namespace ClientClassNamespace
         private readonly int _port;
         private NetworkStream _stream;
         private Thread _listeningThread;
+
+        public event Action<string> OnMessageReceived;
 
         public ClientClass(string serverAddress, int port)
         {
@@ -34,8 +37,12 @@ namespace ClientClassNamespace
         {
             _listeningThread = new Thread(() =>
             {
-                
+                byte[] data = new byte[256];
+                Int32 bytes = _stream.Read(data, 0, data.Length);
+                string message = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
+                OnMessageReceived?.Invoke(message);
             });
+            _listeningThread.Start();
         }
     }
 }
