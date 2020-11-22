@@ -13,6 +13,7 @@ namespace ClientClassNamespace
         private NetworkStream _stream;
         private Thread _listeningThread;
         private bool _isListening = false;
+        private TcpClient _client;
 
         public event Action<string> OnMessageReceived;
 
@@ -24,8 +25,8 @@ namespace ClientClassNamespace
 
         public void Connect()
         {
-            TcpClient client = new TcpClient(_serverAddress, _port);
-            _stream = client.GetStream();
+            _client = new TcpClient(_serverAddress, _port);
+            _stream = _client.GetStream();
             StartListening();
         }
 
@@ -55,6 +56,14 @@ namespace ClientClassNamespace
         private void StopListening()
         {
             _isListening = false;
+        }
+
+        public void Disconnect()
+        {
+            StopListening();
+            _listeningThread.Abort();
+            _stream.Close();
+            _client.Close();
         }
     }
 }
