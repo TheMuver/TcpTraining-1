@@ -1,6 +1,7 @@
 using System.Net;
 using System;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace ClientClassNamespace
 {
@@ -9,6 +10,7 @@ namespace ClientClassNamespace
         private readonly string _serverAddress;
         private readonly int _port;
         private NetworkStream _stream;
+        private Thread _listeningThread;
 
         public ClientClass(string serverAddress, int port)
         {
@@ -26,6 +28,14 @@ namespace ClientClassNamespace
         {
             Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
             _stream.Write(data, 0, data.Length);
+        }
+
+        private void StartListening()
+        {
+            _listeningThread = new Thread(() =>
+            {
+                
+            });
         }
     }
 }
