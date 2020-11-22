@@ -12,6 +12,7 @@ namespace ClientClassNamespace
         private readonly int _port;
         private NetworkStream _stream;
         private Thread _listeningThread;
+        private bool _isListening = false;
 
         public event Action<string> OnMessageReceived;
 
@@ -38,8 +39,9 @@ namespace ClientClassNamespace
         {
             _listeningThread = new Thread(() =>
             {
+                _isListening = true;
                 // todo fix infinity loop
-                while (true)
+                while (_isListening)
                 {
                     byte[] data = new byte[256];
                     Int32 bytes = _stream.Read(data, 0, data.Length);
@@ -48,6 +50,11 @@ namespace ClientClassNamespace
                 }
             });
             _listeningThread.Start();
+        }
+
+        private void StopListening()
+        {
+            _isListening = false;
         }
     }
 }
