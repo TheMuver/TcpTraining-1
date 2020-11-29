@@ -12,9 +12,11 @@ namespace Client
             //Connect("127.0.0.1", "String message");
             ClientClass client = new ClientClass("127.0.0.1", 13000);
             client.OnMessageReceived += (message) => { Console.WriteLine("Message received: " + message); };
+
             client.Connect();
-            client.SendMessage("Hello world");
+            
             client.Disconnect();
+            client.SendMessage("Hello world");
         }
 
         // Functions:
