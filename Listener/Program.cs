@@ -44,12 +44,14 @@ namespace ListenerNamespace
 
                     // Perform a blocking call to accept requests.
                     // You could also use server.AcceptSocket() here.
-                    TcpClient client = server.AcceptTcpClient();
+            
                     Console.WriteLine("Connected!");
                     #endregion class Listener StartWaitingForConnections()
                     #endregion class Listener part 1                    
                     
                     #region class User
+                    TcpClient client = server.AcceptTcpClient();
+
                     Thread clientThread = new Thread(() => {
                         // Buffer for reading data
                         Byte[] bytes = new Byte[256];

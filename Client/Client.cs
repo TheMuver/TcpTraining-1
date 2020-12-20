@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System;
 using System.Net.Sockets;
@@ -19,9 +20,14 @@ namespace ClientClassNamespace
             _port = port;
         }
 
+        public ClientClass(TcpClient client)
+        {
+            _client = client;
+        }
+
         public void Connect()
         {
-            _client = new TcpClient(_serverAddress, _port);
+            _client = _client ?? new TcpClient(_serverAddress, _port);
             _stream = _client.GetStream();
             StartListening();
         }
@@ -61,7 +67,6 @@ namespace ClientClassNamespace
         {
             StopListen();
             _stream.Close();
-            _listeningThread.Abort();
             _client.Close();
         }
     }
