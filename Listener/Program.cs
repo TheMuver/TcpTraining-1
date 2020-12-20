@@ -17,6 +17,9 @@ namespace ListenerNamespace
         {
             Listener listener = new Listener();
             listener.Start();
+
+            Console.ReadLine();
+            listener.Stop();
         }
 
         static void LastMain(string[] args)
