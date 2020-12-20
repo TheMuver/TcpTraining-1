@@ -3,21 +3,26 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace Listener
+namespace ListenerNamespace
 {
     class Program
     {
         // Listener Functions:
         // Start()
-        // StartWaitingForConnections()
+        // (priv) StartWaitingForConnections()
         // (priv) AddNewConnection()
-        // StopWaitingForConnections()
+        // (priv) StopWaitingForConnections()
         // Stop()
+        static void Main()
+        {
+            Listener listener = new Listener();
+            listener.Start();
+        }
 
-        static void Main(string[] args)
+        static void LastMain(string[] args)
         {
             #region class Listener part 1
-            #region class Listener start()
+            #region class Listener Start()
             TcpListener server = null;
             try
             {
@@ -30,7 +35,7 @@ namespace Listener
 
                 // Start listening for client requests.
                 server.Start();
-                #endregion class Listener start()
+                #endregion class Listener Start()
                 #region class Listener StartWaitingForConnections()
                 // Enter the listening loop.
                 while (true)

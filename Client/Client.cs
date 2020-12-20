@@ -1,21 +1,17 @@
-using System.Text;
-using System.Net;
+using System.Threading;
 using System;
 using System.Net.Sockets;
-using System.Threading;
 
 namespace ClientClassNamespace
 {
-    public class ClientClass
+    public class ClientClass 
     {
         private readonly string _serverAddress;
         private readonly int _port;
         private NetworkStream _stream;
         private Thread _listeningThread;
-        private bool _isListening = false;
+        private bool _isListening;
         private TcpClient _client;
-
-        public event Action<string> OnMessageReceived;
 
         public ClientClass(string serverAddress, int port)
         {
@@ -32,20 +28,19 @@ namespace ClientClassNamespace
 
         public void SendMessage(string message)
         {
-            if (_stream != null)
-            {
-                Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
-                _stream.Write(data, 0, data.Length);
-            }
+            Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
+            _stream.Write(data, 0, data.Length);
         }
+
+        public event Action<string> OnMessageReceived;
 
         private void StartListening()
         {
-            _listeningThread = new Thread(() =>
+            _isListening = true;
+
+            _listeningThread = new Thread(() => 
             {
-                _isListening = true;
-                // todo fix infinity loop
-                while (_isListening)
+                while(_isListening)
                 {
                     byte[] data = new byte[256];
                     Int32 bytes = _stream.Read(data, 0, data.Length);
@@ -53,19 +48,20 @@ namespace ClientClassNamespace
                     OnMessageReceived?.Invoke(message);
                 }
             });
+
             _listeningThread.Start();
         }
 
-        private void StopListening()
+        private void StopListen()
         {
             _isListening = false;
         }
 
         public void Disconnect()
         {
-            StopListening();
-            _listeningThread.Interrupt();
+            StopListen();
             _stream.Close();
+            _listeningThread.Abort();
             _client.Close();
         }
     }

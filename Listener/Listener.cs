@@ -1,7 +1,8 @@
+  
 using System.Net;
 using System.Net.Sockets;
 
-namespace ListenerClassNamespace
+namespace ListenerNamespace
 {
     public class Listener
     {
@@ -13,7 +14,8 @@ namespace ListenerClassNamespace
             IPAddress localAddr = IPAddress.Parse("127.0.0.1");
             _server = new TcpListener(localAddr, port);
             _server.Start();
-        }   
+            StartWaitingForConnections();
+        }
 
         private void StartWaitingForConnections()
         {
